@@ -30,7 +30,7 @@
                             <a class="nav-link text-dark me-2" href="/member/logOut">
                                 <i class="fas fa-user-alt me-2"></i>로그아웃
                             </a>
-                            <a class="nav-link text-dark" href="/">회원정보</a>
+                            <a class="nav-link text-dark" href="#">회원정보</a>
                         </div>
                     </c:otherwise>
                 </c:choose>
