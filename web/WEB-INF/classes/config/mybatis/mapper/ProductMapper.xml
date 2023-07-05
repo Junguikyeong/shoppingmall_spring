@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mapper.ProductMapper">
+    <!--parameterType:객체의 데이터타입    resultType: 결과물의 데이터타입-->
+
+    <resultMap id="product" type="productDTO">
+        <result property="registerNickname" column="nickname"/>
+    </resultMap>
+
+    <select id="selectAll" parameterType="hashmap" resultMap="product">
+        SELECT * FROM product
+        INNER JOIN member
+        ON product.registered_member_id = member.id
+        ORDER BY product.id DESC
+        LIMIT ${start},${size}
+    </select>
+    <select id="selectOne" parameterType="int" resultMap="product">
+        SELECT* FROM product
+        INNER JOIN member
+        ON product.registered_member_id = member.id
+        WHERE product.id = #{id}
+    </select>
+
+    <insert id="register" parameterType="productDTO" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO product(name,category,price,stock,description,registered_member_id,img_path)
+        VALUES(#{name},#{category},#{price},#{stock},#{description},#{registeredMemberId},#{imgPath})
+    </insert>
+    <update id="update" parameterType="productDTO">
+        UPDATE product
+        SET name = #{name}, category = #{category}, price = #{price},
+        stock = #{stock}, description = #{description}, registered_member_id = #{registeredMemberId},
+        img_path = #{imgPath}
+        WHERE id = #{id}
+    </update>
+    <delete id="delete" parameterType="int">
+        DELETE FROM product
+        WHERE id = #{id}
+    </delete>
+    <select id="count" resultType="int">
+        SELECT COUNT(*)
+        FROM product
+    </select>
+    <select id="selectByKeyword" parameterType="map" resultMap="product">
+        SELECT * FROM product
+        INNER JOIN member
+        ON product.registered_member_id = member.id
+        WHERE name LIKE concat('%', #{keyword}, '%') OR category LIKE concat('%', #{keyword}, '%') OR description LIKE concat('%', #{keyword}, '%')
+        ORDER BY product.id DESC
+        LIMIT ${start}, ${size}
+    </select>
+    <select id="selectByCategory" parameterType="map" resultMap="product">
+        SELECT * FROM product
+        INNER JOIN member
+        ON product.registered_member_id = member.id
+        WHERE category = #{category}
+        ORDER BY product.id DESC
+        LIMIT ${start}, ${size}
+    </select>
+    <select id="countSearchResult" parameterType="string" resultType="int">
+        SELECT COUNT(*) FROM product
+        WHERE name LIKE concat('%', #{keyword}, '%') OR category LIKE concat('%', #{keyword}, '%') OR description LIKE concat('%', #{keyword}, '%')
+    </select>
+
+</mapper>

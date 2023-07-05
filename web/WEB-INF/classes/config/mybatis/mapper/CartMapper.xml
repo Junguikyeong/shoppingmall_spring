@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mapper.CartMapper">
+    <!--parameterType:객체의 데이터타입    resultType: 결과물의 데이터타입-->
+    <resultMap id="cartList" type="cartDTO">
+        <result property="productName" column="name"/>
+        <result property="productCategory" column="category"/>
+        <result property="productPrice" column="price"/>
+        <result property="productImgPath" column="img_path"/>
+    </resultMap>
+
+    <insert id="put" parameterType="cartDTO" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO cart (member_id, product_id)
+        VALUES (#{memberId},#{productId});
+    </insert>
+    <select id="selectOne" parameterType="cartDTO" resultType="cartDTO">
+        SELECT * FROM cart
+        WHERE member_id = #{memberId} and product_id = #{productId}
+    </select>
+
+    <update id="creditCountUp" parameterType="cartDTO">
+        UPDATE cart
+        SET credit_id = #{creditId}
+        WHERE id = #{id}
+    </update>
+
+    <update id="countUp" parameterType="cartDTO">
+        UPDATE cart
+        SET product_count = #{productCount} + 1
+        WHERE id = #{id}
+    </update>
+    <update id="countUpByValue" parameterType="map">
+        UPDATE cart
+        SET product_count = ${value}
+        WHERE id = #{cartDTO.id}
+    </update>
+    <select id="count" parameterType="cartDTO" resultType="int">
+        SELECT count(*) FROM cart
+        WHERE member_id = #{memberId} and product_id = #{productId}
+    </select>
+    <select id="selectAllByMemberId" parameterType="int" resultType="cartDTO">
+        SELECT * FROM cart
+        WHERE member_id = #{memberId}
+    </select>
+    <select id="selectCartList" parameterType="int" resultMap="cartList">
+        SELECT cart.id,member_id,product_id,name,category,price,product_count,img_path FROM cart
+        INNER JOIN product
+        ON cart.product_id = product.id
+        WHERE member_id = #{memberId}
+    </select>
+    <delete id="delete" parameterType="map">
+        DELETE FROM cart
+        WHERE member_id = #{memberId} and product_id = #{productId}
+    </delete>
+    <delete id="deleteAll" parameterType="int">
+        DELETE FROM cart
+        WHERE member_id = #{memberId}
+    </delete>
+
+
+</mapper>
